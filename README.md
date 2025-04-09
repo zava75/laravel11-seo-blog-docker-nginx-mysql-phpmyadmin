@@ -66,4 +66,13 @@
 
    Running Laravel Application with Docker http://localhost/
 
+4) Install debug bar --dev
+   #bash
+   composer require barryvdh/laravel-debugbar --dev
+
+5) php artisan storage:link
+6) composer require fakerphp/faker --dev
+
+
+
 
