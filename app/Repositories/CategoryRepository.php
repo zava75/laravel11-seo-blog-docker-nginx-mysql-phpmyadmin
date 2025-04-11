@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Category;
-use App\Repositories\Interface\CategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
-class CategoryRepository implements CategoryRepositoryInterface
+class CategoryRepository
 {
 
     public function all(): LengthAwarePaginator
@@ -27,7 +27,7 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::create($data);
     }
 
-    public function update(array $data, int $id): int
+    public function update(array $data, int $id): int|bool
     {
         $user = Category::findOrFail($id);
 
@@ -60,4 +60,16 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return $category->children->where('is_active', true);
     }
+
+    public function getForMenu(): Collection
+    {
+        return Category::select('id', 'name', 'parent_id', 'is_active', 'slug')
+            ->with(['children' => function ($query) {
+                $query->select('id', 'name', 'parent_id', 'is_active', 'slug');
+            }])
+            ->where('is_active', true)
+            ->whereNull('parent_id')
+            ->get();
+    }
+
 }
